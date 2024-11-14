@@ -33,6 +33,8 @@ namespace Stripe
             "net7.0"
 #elif NET8_0
             "net8.0"
+#elif NET9_0
+            "net9.0"
 #elif NETCOREAPP3_1
             "netcoreapp3.1"
 #elif NETSTANDARD2_0
@@ -59,6 +61,7 @@ namespace Stripe
 
         private string stripeClientUserAgentString;
 
+#if !NET5_0_OR_GREATER
         static SystemNetHttpClient()
         {
             // Enable support for TLS 1.2, as Stripe's API requires it. This should only be
@@ -67,6 +70,7 @@ namespace Stripe
             ServicePointManager.SecurityProtocol = ServicePointManager.SecurityProtocol |
                 SecurityProtocolType.Tls12;
         }
+#endif
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SystemNetHttpClient"/> class.
