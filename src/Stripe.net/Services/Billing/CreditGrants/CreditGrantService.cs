@@ -29,7 +29,7 @@ namespace Stripe.Billing
         }
 
         /// <summary>
-        /// <p>Creates a credit grant</p>.
+        /// <p>Creates a credit grant.</p>.
         /// </summary>
         public virtual CreditGrant Create(CreditGrantCreateOptions options, RequestOptions requestOptions = null)
         {
@@ -37,7 +37,7 @@ namespace Stripe.Billing
         }
 
         /// <summary>
-        /// <p>Creates a credit grant</p>.
+        /// <p>Creates a credit grant.</p>.
         /// </summary>
         public virtual Task<CreditGrant> CreateAsync(CreditGrantCreateOptions options, RequestOptions requestOptions = null, CancellationToken cancellationToken = default)
         {
@@ -45,7 +45,7 @@ namespace Stripe.Billing
         }
 
         /// <summary>
-        /// <p>Expires a credit grant</p>.
+        /// <p>Expires a credit grant.</p>.
         /// </summary>
         public virtual CreditGrant Expire(string id, CreditGrantExpireOptions options = null, RequestOptions requestOptions = null)
         {
@@ -53,7 +53,7 @@ namespace Stripe.Billing
         }
 
         /// <summary>
-        /// <p>Expires a credit grant</p>.
+        /// <p>Expires a credit grant.</p>.
         /// </summary>
         public virtual Task<CreditGrant> ExpireAsync(string id, CreditGrantExpireOptions options = null, RequestOptions requestOptions = null, CancellationToken cancellationToken = default)
         {
@@ -61,7 +61,7 @@ namespace Stripe.Billing
         }
 
         /// <summary>
-        /// <p>Retrieves a credit grant</p>.
+        /// <p>Retrieves a credit grant.</p>.
         /// </summary>
         public virtual CreditGrant Get(string id, CreditGrantGetOptions options = null, RequestOptions requestOptions = null)
         {
@@ -69,7 +69,7 @@ namespace Stripe.Billing
         }
 
         /// <summary>
-        /// <p>Retrieves a credit grant</p>.
+        /// <p>Retrieves a credit grant.</p>.
         /// </summary>
         public virtual Task<CreditGrant> GetAsync(string id, CreditGrantGetOptions options = null, RequestOptions requestOptions = null, CancellationToken cancellationToken = default)
         {
@@ -77,7 +77,7 @@ namespace Stripe.Billing
         }
 
         /// <summary>
-        /// <p>Retrieve a list of credit grants</p>.
+        /// <p>Retrieve a list of credit grants.</p>.
         /// </summary>
         public virtual StripeList<CreditGrant> List(CreditGrantListOptions options = null, RequestOptions requestOptions = null)
         {
@@ -85,7 +85,7 @@ namespace Stripe.Billing
         }
 
         /// <summary>
-        /// <p>Retrieve a list of credit grants</p>.
+        /// <p>Retrieve a list of credit grants.</p>.
         /// </summary>
         public virtual Task<StripeList<CreditGrant>> ListAsync(CreditGrantListOptions options = null, RequestOptions requestOptions = null, CancellationToken cancellationToken = default)
         {
@@ -93,7 +93,7 @@ namespace Stripe.Billing
         }
 
         /// <summary>
-        /// <p>Retrieve a list of credit grants</p>.
+        /// <p>Retrieve a list of credit grants.</p>.
         /// </summary>
         public virtual IEnumerable<CreditGrant> ListAutoPaging(CreditGrantListOptions options = null, RequestOptions requestOptions = null)
         {
@@ -101,7 +101,7 @@ namespace Stripe.Billing
         }
 
         /// <summary>
-        /// <p>Retrieve a list of credit grants</p>.
+        /// <p>Retrieve a list of credit grants.</p>.
         /// </summary>
         public virtual IAsyncEnumerable<CreditGrant> ListAutoPagingAsync(CreditGrantListOptions options = null, RequestOptions requestOptions = null, CancellationToken cancellationToken = default)
         {
@@ -109,7 +109,7 @@ namespace Stripe.Billing
         }
 
         /// <summary>
-        /// <p>Updates a credit grant</p>.
+        /// <p>Updates a credit grant.</p>.
         /// </summary>
         public virtual CreditGrant Update(string id, CreditGrantUpdateOptions options, RequestOptions requestOptions = null)
         {
@@ -117,7 +117,7 @@ namespace Stripe.Billing
         }
 
         /// <summary>
-        /// <p>Updates a credit grant</p>.
+        /// <p>Updates a credit grant.</p>.
         /// </summary>
         public virtual Task<CreditGrant> UpdateAsync(string id, CreditGrantUpdateOptions options, RequestOptions requestOptions = null, CancellationToken cancellationToken = default)
         {
@@ -125,7 +125,7 @@ namespace Stripe.Billing
         }
 
         /// <summary>
-        /// <p>Voids a credit grant</p>.
+        /// <p>Voids a credit grant.</p>.
         /// </summary>
         public virtual CreditGrant VoidGrant(string id, CreditGrantVoidGrantOptions options = null, RequestOptions requestOptions = null)
         {
@@ -133,7 +133,7 @@ namespace Stripe.Billing
         }
 
         /// <summary>
-        /// <p>Voids a credit grant</p>.
+        /// <p>Voids a credit grant.</p>.
         /// </summary>
         public virtual Task<CreditGrant> VoidGrantAsync(string id, CreditGrantVoidGrantOptions options = null, RequestOptions requestOptions = null, CancellationToken cancellationToken = default)
         {
