@@ -89,6 +89,7 @@ namespace Stripe
                 { "identity.verification_report", typeof(Identity.VerificationReport) },
                 { "identity.verification_session", typeof(Identity.VerificationSession) },
                 { "invoice", typeof(Invoice) },
+                { "invoice_payment", typeof(InvoicePayment) },
                 { "invoice_rendering_template", typeof(InvoiceRenderingTemplate) },
                 { "invoiceitem", typeof(InvoiceItem) },
                 { "issuing.authorization", typeof(Issuing.Authorization) },
@@ -167,8 +168,6 @@ namespace Stripe
                 { "treasury.received_debit", typeof(Treasury.ReceivedDebit) },
                 { "treasury.transaction", typeof(Treasury.Transaction) },
                 { "treasury.transaction_entry", typeof(Treasury.TransactionEntry) },
-                { "usage_record", typeof(UsageRecord) },
-                { "usage_record_summary", typeof(UsageRecordSummary) },
                 { "webhook_endpoint", typeof(WebhookEndpoint) },
 
                 // ObjectsToTypes: The end of the section generated from our OpenAPI spec
@@ -179,10 +178,7 @@ namespace Stripe
             {
                 // V2ObjectsToTypes: The beginning of the section generated from our OpenAPI spec
                 { "v2.billing.meter_event", typeof(V2.Billing.MeterEvent) },
-                {
-                    "v2.billing.meter_event_adjustment", typeof(
-                    V2.Billing.MeterEventAdjustment)
-                },
+                { "v2.billing.meter_event_adjustment", typeof(V2.Billing.MeterEventAdjustment) },
                 { "v2.billing.meter_event_session", typeof(V2.Billing.MeterEventSession) },
                 { "v2.core.event", typeof(V2.Event) },
                 { "v2.core.event_destination", typeof(V2.EventDestination) },
@@ -201,6 +197,10 @@ namespace Stripe
                 {
                     "v1.billing.meter.no_meter_found", typeof(
                     Events.V1BillingMeterNoMeterFoundEvent)
+                },
+                {
+                    "v2.core.event_destination.ping", typeof(
+                    Events.V2CoreEventDestinationPingEvent)
                 },
 
                 // ThinTypesToEventTypes: The end of the section generated from our OpenAPI spec

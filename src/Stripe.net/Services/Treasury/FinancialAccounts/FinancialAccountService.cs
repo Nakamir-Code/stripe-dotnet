@@ -8,7 +8,7 @@ namespace Stripe.Treasury
     using System.Threading;
     using System.Threading.Tasks;
 
-    public partial class FinancialAccountService : Service<FinancialAccount>,
+    public partial class FinancialAccountService : Service,
         ICreatable<FinancialAccount, FinancialAccountCreateOptions>,
         IListable<FinancialAccount, FinancialAccountListOptions>,
         IRetrievable<FinancialAccount, FinancialAccountGetOptions>,
@@ -34,8 +34,28 @@ namespace Stripe.Treasury
             this.Requestor);
 
         /// <summary>
-        /// <p>Creates a new FinancialAccount. For now, each connected account can only have one
-        /// FinancialAccount.</p>.
+        /// <p>Closes a FinancialAccount. A FinancialAccount can only be closed if it has a zero
+        /// balance, has no pending InboundTransfers, and has canceled all attached Issuing
+        /// cards.</p>.
+        /// </summary>
+        public virtual FinancialAccount Close(string id, FinancialAccountCloseOptions options = null, RequestOptions requestOptions = null)
+        {
+            return this.Request<FinancialAccount>(BaseAddress.Api, HttpMethod.Post, $"/v1/treasury/financial_accounts/{WebUtility.UrlEncode(id)}/close", options, requestOptions);
+        }
+
+        /// <summary>
+        /// <p>Closes a FinancialAccount. A FinancialAccount can only be closed if it has a zero
+        /// balance, has no pending InboundTransfers, and has canceled all attached Issuing
+        /// cards.</p>.
+        /// </summary>
+        public virtual Task<FinancialAccount> CloseAsync(string id, FinancialAccountCloseOptions options = null, RequestOptions requestOptions = null, CancellationToken cancellationToken = default)
+        {
+            return this.RequestAsync<FinancialAccount>(BaseAddress.Api, HttpMethod.Post, $"/v1/treasury/financial_accounts/{WebUtility.UrlEncode(id)}/close", options, requestOptions, cancellationToken);
+        }
+
+        /// <summary>
+        /// <p>Creates a new FinancialAccount. Each connected account can have up to three
+        /// FinancialAccounts by default.</p>.
         /// </summary>
         public virtual FinancialAccount Create(FinancialAccountCreateOptions options, RequestOptions requestOptions = null)
         {
@@ -43,8 +63,8 @@ namespace Stripe.Treasury
         }
 
         /// <summary>
-        /// <p>Creates a new FinancialAccount. For now, each connected account can only have one
-        /// FinancialAccount.</p>.
+        /// <p>Creates a new FinancialAccount. Each connected account can have up to three
+        /// FinancialAccounts by default.</p>.
         /// </summary>
         public virtual Task<FinancialAccount> CreateAsync(FinancialAccountCreateOptions options, RequestOptions requestOptions = null, CancellationToken cancellationToken = default)
         {

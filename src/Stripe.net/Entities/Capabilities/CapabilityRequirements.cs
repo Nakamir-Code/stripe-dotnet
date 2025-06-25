@@ -5,6 +5,9 @@ namespace Stripe
     using System.Collections.Generic;
     using Newtonsoft.Json;
     using Stripe.Infrastructure;
+#if NET6_0_OR_GREATER
+    using STJS = System.Text.Json.Serialization;
+#endif
 
     public class CapabilityRequirements : StripeEntity<CapabilityRequirements>
     {
@@ -13,15 +16,24 @@ namespace Stripe
         /// fields instead.
         /// </summary>
         [JsonProperty("alternatives")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("alternatives")]
+#endif
         public List<CapabilityRequirementsAlternative> Alternatives { get; set; }
 
         /// <summary>
-        /// Date by which the fields in <c>currently_due</c> must be collected to keep the
-        /// capability enabled for the account. These fields may disable the capability sooner if
-        /// the next threshold is reached before they are collected.
+        /// The date by which all required account information must be both submitted and verified.
+        /// This includes fields listed in <c>currently_due</c> as well as those in
+        /// <c>pending_verification</c>. If any required information is missing or unverified by
+        /// this date, the account may be disabled. Note that <c>current_deadline</c> may change if
+        /// additional <c>currently_due</c> requirements are requested.
         /// </summary>
         [JsonProperty("current_deadline")]
         [JsonConverter(typeof(UnixDateTimeConverter))]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("current_deadline")]
+        [STJS.JsonConverter(typeof(STJUnixDateTimeConverter))]
+#endif
         public DateTime? CurrentDeadline { get; set; }
 
         /// <summary>
@@ -30,6 +42,9 @@ namespace Stripe
         /// capability is disabled.
         /// </summary>
         [JsonProperty("currently_due")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("currently_due")]
+#endif
         public List<string> CurrentlyDue { get; set; }
 
         /// <summary>
@@ -42,6 +57,9 @@ namespace Stripe
         /// or <c>requirements.fields_needed</c>.
         /// </summary>
         [JsonProperty("disabled_reason")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("disabled_reason")]
+#endif
         public string DisabledReason { get; set; }
 
         /// <summary>
@@ -49,6 +67,9 @@ namespace Stripe
         /// or verification failed.
         /// </summary>
         [JsonProperty("errors")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("errors")]
+#endif
         public List<AccountRequirementsError> Errors { get; set; }
 
         /// <summary>
@@ -56,6 +77,9 @@ namespace Stripe
         /// appear in <c>currently_due</c> as well, and <c>current_deadline</c> becomes set.
         /// </summary>
         [JsonProperty("eventually_due")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("eventually_due")]
+#endif
         public List<string> EventuallyDue { get; set; }
 
         /// <summary>
@@ -63,6 +87,9 @@ namespace Stripe
         /// collected to enable the capability on the account.
         /// </summary>
         [JsonProperty("past_due")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("past_due")]
+#endif
         public List<string> PastDue { get; set; }
 
         /// <summary>
@@ -74,6 +101,9 @@ namespace Stripe
         /// verification is still pending.
         /// </summary>
         [JsonProperty("pending_verification")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("pending_verification")]
+#endif
         public List<string> PendingVerification { get; set; }
     }
 }

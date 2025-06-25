@@ -4,6 +4,9 @@ namespace Stripe
     using System;
     using Newtonsoft.Json;
     using Stripe.Infrastructure;
+#if NET6_0_OR_GREATER
+    using STJS = System.Text.Json.Serialization;
+#endif
 
     public class SubscriptionResumeOptions : BaseOptions
     {
@@ -15,27 +18,37 @@ namespace Stripe
         /// One of: <c>now</c>, or <c>unchanged</c>.
         /// </summary>
         [JsonProperty("billing_cycle_anchor")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("billing_cycle_anchor")]
+#endif
         public SubscriptionBillingCycleAnchor BillingCycleAnchor { get; set; }
 
         /// <summary>
         /// Determines how to handle <a
-        /// href="https://stripe.com/docs/billing/subscriptions/prorations">prorations</a> when the
-        /// billing cycle changes (e.g., when switching plans, resetting
-        /// <c>billing_cycle_anchor=now</c>, or starting a trial), or if an item's <c>quantity</c>
-        /// changes. The default value is <c>create_prorations</c>.
+        /// href="https://stripe.com/docs/billing/subscriptions/prorations">prorations</a> resulting
+        /// from the <c>billing_cycle_anchor</c> being <c>unchanged</c>. When the
+        /// <c>billing_cycle_anchor</c> is set to <c>now</c> (default value), no prorations are
+        /// generated. If no value is passed, the default is <c>create_prorations</c>.
         /// One of: <c>always_invoice</c>, <c>create_prorations</c>, or <c>none</c>.
         /// </summary>
         [JsonProperty("proration_behavior")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("proration_behavior")]
+#endif
         public string ProrationBehavior { get; set; }
 
         /// <summary>
-        /// If set, the proration will be calculated as though the subscription was resumed at the
-        /// given time. This can be used to apply exactly the same proration that was previewed with
-        /// <a href="https://stripe.com/docs/api#retrieve_customer_invoice">upcoming invoice</a>
-        /// endpoint.
+        /// If set, prorations will be calculated as though the subscription was resumed at the
+        /// given time. This can be used to apply exactly the same prorations that were previewed
+        /// with the <a href="https://stripe.com/docs/api/invoices/create_preview">create
+        /// preview</a> endpoint.
         /// </summary>
         [JsonProperty("proration_date")]
         [JsonConverter(typeof(UnixDateTimeConverter))]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("proration_date")]
+        [STJS.JsonConverter(typeof(STJUnixDateTimeConverter))]
+#endif
         public DateTime? ProrationDate { get; set; }
     }
 }

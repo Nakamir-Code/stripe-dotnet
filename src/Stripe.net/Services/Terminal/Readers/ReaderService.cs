@@ -8,7 +8,7 @@ namespace Stripe.Terminal
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class ReaderService : Service<Reader>,
+    public class ReaderService : Service,
         ICreatable<Reader, ReaderCreateOptions>,
         IDeletable<Reader, ReaderDeleteOptions>,
         IListable<Reader, ReaderListOptions>,
@@ -43,6 +43,22 @@ namespace Stripe.Terminal
         public virtual Task<Reader> CancelActionAsync(string id, ReaderCancelActionOptions options = null, RequestOptions requestOptions = null, CancellationToken cancellationToken = default)
         {
             return this.RequestAsync<Reader>(BaseAddress.Api, HttpMethod.Post, $"/v1/terminal/readers/{WebUtility.UrlEncode(id)}/cancel_action", options, requestOptions, cancellationToken);
+        }
+
+        /// <summary>
+        /// <p>Initiates an input collection flow on a Reader.</p>.
+        /// </summary>
+        public virtual Reader CollectInputs(string id, ReaderCollectInputsOptions options = null, RequestOptions requestOptions = null)
+        {
+            return this.Request<Reader>(BaseAddress.Api, HttpMethod.Post, $"/v1/terminal/readers/{WebUtility.UrlEncode(id)}/collect_inputs", options, requestOptions);
+        }
+
+        /// <summary>
+        /// <p>Initiates an input collection flow on a Reader.</p>.
+        /// </summary>
+        public virtual Task<Reader> CollectInputsAsync(string id, ReaderCollectInputsOptions options = null, RequestOptions requestOptions = null, CancellationToken cancellationToken = default)
+        {
+            return this.RequestAsync<Reader>(BaseAddress.Api, HttpMethod.Post, $"/v1/terminal/readers/{WebUtility.UrlEncode(id)}/collect_inputs", options, requestOptions, cancellationToken);
         }
 
         /// <summary>

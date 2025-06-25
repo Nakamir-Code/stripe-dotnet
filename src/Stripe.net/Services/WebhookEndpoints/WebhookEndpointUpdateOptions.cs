@@ -3,6 +3,9 @@ namespace Stripe
 {
     using System.Collections.Generic;
     using Newtonsoft.Json;
+#if NET6_0_OR_GREATER
+    using STJS = System.Text.Json.Serialization;
+#endif
 
     public class WebhookEndpointUpdateOptions : BaseOptions, IHasMetadata
     {
@@ -10,12 +13,18 @@ namespace Stripe
         /// An optional description of what the webhook is used for.
         /// </summary>
         [JsonProperty("description")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("description")]
+#endif
         public string Description { get; set; }
 
         /// <summary>
         /// Disable the webhook endpoint if set to true.
         /// </summary>
         [JsonProperty("disabled")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("disabled")]
+#endif
         public bool? Disabled { get; set; }
 
         /// <summary>
@@ -70,18 +79,19 @@ namespace Stripe
         /// <c>identity.verification_session.requires_input</c>,
         /// <c>identity.verification_session.verified</c>, <c>invoice.created</c>,
         /// <c>invoice.deleted</c>, <c>invoice.finalization_failed</c>, <c>invoice.finalized</c>,
-        /// <c>invoice.marked_uncollectible</c>, <c>invoice.overdue</c>, <c>invoice.paid</c>,
-        /// <c>invoice.payment_action_required</c>, <c>invoice.payment_failed</c>,
-        /// <c>invoice.payment_succeeded</c>, <c>invoice.sent</c>, <c>invoice.upcoming</c>,
-        /// <c>invoice.updated</c>, <c>invoice.voided</c>, <c>invoice.will_be_due</c>,
-        /// <c>invoiceitem.created</c>, <c>invoiceitem.deleted</c>,
-        /// <c>issuing_authorization.created</c>, <c>issuing_authorization.request</c>,
-        /// <c>issuing_authorization.updated</c>, <c>issuing_card.created</c>,
-        /// <c>issuing_card.updated</c>, <c>issuing_cardholder.created</c>,
-        /// <c>issuing_cardholder.updated</c>, <c>issuing_dispute.closed</c>,
-        /// <c>issuing_dispute.created</c>, <c>issuing_dispute.funds_reinstated</c>,
-        /// <c>issuing_dispute.funds_rescinded</c>, <c>issuing_dispute.submitted</c>,
-        /// <c>issuing_dispute.updated</c>, <c>issuing_personalization_design.activated</c>,
+        /// <c>invoice.marked_uncollectible</c>, <c>invoice.overdue</c>, <c>invoice.overpaid</c>,
+        /// <c>invoice.paid</c>, <c>invoice.payment_action_required</c>,
+        /// <c>invoice.payment_failed</c>, <c>invoice.payment_succeeded</c>, <c>invoice.sent</c>,
+        /// <c>invoice.upcoming</c>, <c>invoice.updated</c>, <c>invoice.voided</c>,
+        /// <c>invoice.will_be_due</c>, <c>invoice_payment.paid</c>, <c>invoiceitem.created</c>,
+        /// <c>invoiceitem.deleted</c>, <c>issuing_authorization.created</c>,
+        /// <c>issuing_authorization.request</c>, <c>issuing_authorization.updated</c>,
+        /// <c>issuing_card.created</c>, <c>issuing_card.updated</c>,
+        /// <c>issuing_cardholder.created</c>, <c>issuing_cardholder.updated</c>,
+        /// <c>issuing_dispute.closed</c>, <c>issuing_dispute.created</c>,
+        /// <c>issuing_dispute.funds_reinstated</c>, <c>issuing_dispute.funds_rescinded</c>,
+        /// <c>issuing_dispute.submitted</c>, <c>issuing_dispute.updated</c>,
+        /// <c>issuing_personalization_design.activated</c>,
         /// <c>issuing_personalization_design.deactivated</c>,
         /// <c>issuing_personalization_design.rejected</c>,
         /// <c>issuing_personalization_design.updated</c>, <c>issuing_token.created</c>,
@@ -141,10 +151,16 @@ namespace Stripe
         /// <c>treasury.outbound_transfer.returned</c>,
         /// <c>treasury.outbound_transfer.tracking_details_updated</c>,
         /// <c>treasury.received_credit.created</c>, <c>treasury.received_credit.failed</c>,
-        /// <c>treasury.received_credit.succeeded</c>, <c>treasury.received_debit.created</c>, or
-        /// <c>ping</c>.
+        /// <c>treasury.received_credit.succeeded</c>, <c>treasury.received_debit.created</c>,
+        /// <c>billing.credit_balance_transaction.created</c>, <c>billing.credit_grant.created</c>,
+        /// <c>billing.credit_grant.updated</c>, <c>billing.meter.created</c>,
+        /// <c>billing.meter.deactivated</c>, <c>billing.meter.reactivated</c>,
+        /// <c>billing.meter.updated</c>, or <c>ping</c>.
         /// </summary>
         [JsonProperty("enabled_events")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("enabled_events")]
+#endif
         public List<string> EnabledEvents { get; set; }
 
         /// <summary>
@@ -154,12 +170,18 @@ namespace Stripe
         /// them. All keys can be unset by posting an empty value to <c>metadata</c>.
         /// </summary>
         [JsonProperty("metadata")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("metadata")]
+#endif
         public Dictionary<string, string> Metadata { get; set; }
 
         /// <summary>
         /// The URL of the webhook endpoint.
         /// </summary>
         [JsonProperty("url")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("url")]
+#endif
         public string Url { get; set; }
     }
 }

@@ -8,7 +8,7 @@ namespace Stripe
     using System.Threading;
     using System.Threading.Tasks;
 
-    public partial class InvoiceService : Service<Invoice>,
+    public partial class InvoiceService : Service,
         ICreatable<Invoice, InvoiceCreateOptions>,
         IDeletable<Invoice, InvoiceDeleteOptions>,
         IListable<Invoice, InvoiceListOptions>,
@@ -17,7 +17,6 @@ namespace Stripe
         IUpdatable<Invoice, InvoiceUpdateOptions>
     {
         private InvoiceLineItemService lineItems;
-        private InvoiceUpcomingLinesService upcomingLines;
 
         public InvoiceService()
         {
@@ -36,9 +35,6 @@ namespace Stripe
         public virtual InvoiceLineItemService LineItems => this.lineItems ??= new InvoiceLineItemService(
             this.Requestor);
 
-        public virtual InvoiceUpcomingLinesService UpcomingLines => this.upcomingLines ??= new InvoiceUpcomingLinesService(
-            this.Requestor);
-
         /// <summary>
         /// <p>Adds multiple line items to an invoice. This is only possible when an invoice is
         /// still a draft.</p>.
@@ -55,6 +51,44 @@ namespace Stripe
         public virtual Task<Invoice> AddLinesAsync(string id, InvoiceAddLinesOptions options = null, RequestOptions requestOptions = null, CancellationToken cancellationToken = default)
         {
             return this.RequestAsync<Invoice>(BaseAddress.Api, HttpMethod.Post, $"/v1/invoices/{WebUtility.UrlEncode(id)}/add_lines", options, requestOptions, cancellationToken);
+        }
+
+        /// <summary>
+        /// <p>Attaches a PaymentIntent or an Out of Band Payment to the invoice, adding it to the
+        /// list of <c>payments</c>.</p>.
+        ///
+        /// <p>For the PaymentIntent, when the PaymentIntent’s status changes to <c>succeeded</c>,
+        /// the payment is credited to the invoice, increasing its <c>amount_paid</c>. When the
+        /// invoice is fully paid, the invoice’s status becomes <c>paid</c>.</p>.
+        ///
+        /// <p>If the PaymentIntent’s status is already <c>succeeded</c> when it’s attached, it’s
+        /// credited to the invoice immediately.</p>.
+        ///
+        /// <p>See: <a href="https://stripe.com/docs/invoicing/partial-payments">Partial
+        /// payments</a> to learn more.</p>.
+        /// </summary>
+        public virtual Invoice AttachPayment(string id, InvoiceAttachPaymentOptions options = null, RequestOptions requestOptions = null)
+        {
+            return this.Request<Invoice>(BaseAddress.Api, HttpMethod.Post, $"/v1/invoices/{WebUtility.UrlEncode(id)}/attach_payment", options, requestOptions);
+        }
+
+        /// <summary>
+        /// <p>Attaches a PaymentIntent or an Out of Band Payment to the invoice, adding it to the
+        /// list of <c>payments</c>.</p>.
+        ///
+        /// <p>For the PaymentIntent, when the PaymentIntent’s status changes to <c>succeeded</c>,
+        /// the payment is credited to the invoice, increasing its <c>amount_paid</c>. When the
+        /// invoice is fully paid, the invoice’s status becomes <c>paid</c>.</p>.
+        ///
+        /// <p>If the PaymentIntent’s status is already <c>succeeded</c> when it’s attached, it’s
+        /// credited to the invoice immediately.</p>.
+        ///
+        /// <p>See: <a href="https://stripe.com/docs/invoicing/partial-payments">Partial
+        /// payments</a> to learn more.</p>.
+        /// </summary>
+        public virtual Task<Invoice> AttachPaymentAsync(string id, InvoiceAttachPaymentOptions options = null, RequestOptions requestOptions = null, CancellationToken cancellationToken = default)
+        {
+            return this.RequestAsync<Invoice>(BaseAddress.Api, HttpMethod.Post, $"/v1/invoices/{WebUtility.UrlEncode(id)}/attach_payment", options, requestOptions, cancellationToken);
         }
 
         /// <summary>
@@ -82,24 +116,26 @@ namespace Stripe
         }
 
         /// <summary>
-        /// <p>At any time, you can preview the upcoming invoice for a customer. This will show you
-        /// all the charges that are pending, including subscription renewal charges, invoice item
-        /// charges, etc. It will also show you any discounts that are applicable to the
-        /// invoice.</p>.
+        /// <p>At any time, you can preview the upcoming invoice for a subscription or subscription
+        /// schedule. This will show you all the charges that are pending, including subscription
+        /// renewal charges, invoice item charges, etc. It will also show you any discounts that are
+        /// applicable to the invoice.</p>.
+        ///
+        /// <p>You can also preview the effects of creating or updating a subscription or
+        /// subscription schedule, including a preview of any prorations that will take place. To
+        /// ensure that the actual proration is calculated exactly the same as the previewed
+        /// proration, you should pass the <c>subscription_details.proration_date</c> parameter when
+        /// doing the actual subscription update.</p>.
+        ///
+        /// <p>The recommended way to get only the prorations being previewed on the invoice is to
+        /// consider line items where <c>parent.subscription_item_details.proration</c> is
+        /// <c>true</c>.</p>.
         ///
         /// <p>Note that when you are viewing an upcoming invoice, you are simply viewing a preview
         /// – the invoice has not yet been created. As such, the upcoming invoice will not show up
         /// in invoice listing calls, and you cannot use the API to pay or edit the invoice. If you
         /// want to change the amount that your customer will be billed, you can add, remove, or
         /// update pending invoice items, or update the customer’s discount.</p>.
-        ///
-        /// <p>You can preview the effects of updating a subscription, including a preview of what
-        /// proration will take place. To ensure that the actual proration is calculated exactly the
-        /// same as the previewed proration, you should pass the
-        /// <c>subscription_details.proration_date</c> parameter when doing the actual subscription
-        /// update. The recommended way to get only the prorations being previewed is to consider
-        /// only proration line items where <c>period[start]</c> is equal to the
-        /// <c>subscription_details.proration_date</c> value passed in the request. </p>.
         ///
         /// <p>Note: Currency conversion calculations use the latest exchange rates. Exchange rates
         /// may vary between the time of the preview and the time of the actual invoice creation. <a
@@ -111,24 +147,26 @@ namespace Stripe
         }
 
         /// <summary>
-        /// <p>At any time, you can preview the upcoming invoice for a customer. This will show you
-        /// all the charges that are pending, including subscription renewal charges, invoice item
-        /// charges, etc. It will also show you any discounts that are applicable to the
-        /// invoice.</p>.
+        /// <p>At any time, you can preview the upcoming invoice for a subscription or subscription
+        /// schedule. This will show you all the charges that are pending, including subscription
+        /// renewal charges, invoice item charges, etc. It will also show you any discounts that are
+        /// applicable to the invoice.</p>.
+        ///
+        /// <p>You can also preview the effects of creating or updating a subscription or
+        /// subscription schedule, including a preview of any prorations that will take place. To
+        /// ensure that the actual proration is calculated exactly the same as the previewed
+        /// proration, you should pass the <c>subscription_details.proration_date</c> parameter when
+        /// doing the actual subscription update.</p>.
+        ///
+        /// <p>The recommended way to get only the prorations being previewed on the invoice is to
+        /// consider line items where <c>parent.subscription_item_details.proration</c> is
+        /// <c>true</c>.</p>.
         ///
         /// <p>Note that when you are viewing an upcoming invoice, you are simply viewing a preview
         /// – the invoice has not yet been created. As such, the upcoming invoice will not show up
         /// in invoice listing calls, and you cannot use the API to pay or edit the invoice. If you
         /// want to change the amount that your customer will be billed, you can add, remove, or
         /// update pending invoice items, or update the customer’s discount.</p>.
-        ///
-        /// <p>You can preview the effects of updating a subscription, including a preview of what
-        /// proration will take place. To ensure that the actual proration is calculated exactly the
-        /// same as the previewed proration, you should pass the
-        /// <c>subscription_details.proration_date</c> parameter when doing the actual subscription
-        /// update. The recommended way to get only the prorations being previewed is to consider
-        /// only proration line items where <c>period[start]</c> is equal to the
-        /// <c>subscription_details.proration_date</c> value passed in the request. </p>.
         ///
         /// <p>Note: Currency conversion calculations use the latest exchange rates. Exchange rates
         /// may vary between the time of the preview and the time of the actual invoice creation. <a
@@ -377,64 +415,6 @@ namespace Stripe
         public virtual Task<Invoice> SendInvoiceAsync(string id, InvoiceSendOptions options = null, RequestOptions requestOptions = null, CancellationToken cancellationToken = default)
         {
             return this.RequestAsync<Invoice>(BaseAddress.Api, HttpMethod.Post, $"/v1/invoices/{WebUtility.UrlEncode(id)}/send", options, requestOptions, cancellationToken);
-        }
-
-        /// <summary>
-        /// <p>At any time, you can preview the upcoming invoice for a customer. This will show you
-        /// all the charges that are pending, including subscription renewal charges, invoice item
-        /// charges, etc. It will also show you any discounts that are applicable to the
-        /// invoice.</p>.
-        ///
-        /// <p>Note that when you are viewing an upcoming invoice, you are simply viewing a preview
-        /// – the invoice has not yet been created. As such, the upcoming invoice will not show up
-        /// in invoice listing calls, and you cannot use the API to pay or edit the invoice. If you
-        /// want to change the amount that your customer will be billed, you can add, remove, or
-        /// update pending invoice items, or update the customer’s discount.</p>.
-        ///
-        /// <p>You can preview the effects of updating a subscription, including a preview of what
-        /// proration will take place. To ensure that the actual proration is calculated exactly the
-        /// same as the previewed proration, you should pass the
-        /// <c>subscription_details.proration_date</c> parameter when doing the actual subscription
-        /// update. The recommended way to get only the prorations being previewed is to consider
-        /// only proration line items where <c>period[start]</c> is equal to the
-        /// <c>subscription_details.proration_date</c> value passed in the request.</p>.
-        ///
-        /// <p>Note: Currency conversion calculations use the latest exchange rates. Exchange rates
-        /// may vary between the time of the preview and the time of the actual invoice creation. <a
-        /// href="https://docs.stripe.com/currencies/conversions">Learn more</a></p>.
-        /// </summary>
-        public virtual Invoice Upcoming(UpcomingInvoiceOptions options = null, RequestOptions requestOptions = null)
-        {
-            return this.Request<Invoice>(BaseAddress.Api, HttpMethod.Get, $"/v1/invoices/upcoming", options, requestOptions);
-        }
-
-        /// <summary>
-        /// <p>At any time, you can preview the upcoming invoice for a customer. This will show you
-        /// all the charges that are pending, including subscription renewal charges, invoice item
-        /// charges, etc. It will also show you any discounts that are applicable to the
-        /// invoice.</p>.
-        ///
-        /// <p>Note that when you are viewing an upcoming invoice, you are simply viewing a preview
-        /// – the invoice has not yet been created. As such, the upcoming invoice will not show up
-        /// in invoice listing calls, and you cannot use the API to pay or edit the invoice. If you
-        /// want to change the amount that your customer will be billed, you can add, remove, or
-        /// update pending invoice items, or update the customer’s discount.</p>.
-        ///
-        /// <p>You can preview the effects of updating a subscription, including a preview of what
-        /// proration will take place. To ensure that the actual proration is calculated exactly the
-        /// same as the previewed proration, you should pass the
-        /// <c>subscription_details.proration_date</c> parameter when doing the actual subscription
-        /// update. The recommended way to get only the prorations being previewed is to consider
-        /// only proration line items where <c>period[start]</c> is equal to the
-        /// <c>subscription_details.proration_date</c> value passed in the request.</p>.
-        ///
-        /// <p>Note: Currency conversion calculations use the latest exchange rates. Exchange rates
-        /// may vary between the time of the preview and the time of the actual invoice creation. <a
-        /// href="https://docs.stripe.com/currencies/conversions">Learn more</a></p>.
-        /// </summary>
-        public virtual Task<Invoice> UpcomingAsync(UpcomingInvoiceOptions options = null, RequestOptions requestOptions = null, CancellationToken cancellationToken = default)
-        {
-            return this.RequestAsync<Invoice>(BaseAddress.Api, HttpMethod.Get, $"/v1/invoices/upcoming", options, requestOptions, cancellationToken);
         }
 
         /// <summary>

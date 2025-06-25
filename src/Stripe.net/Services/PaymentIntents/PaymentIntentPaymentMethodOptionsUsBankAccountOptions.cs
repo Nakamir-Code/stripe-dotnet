@@ -2,6 +2,9 @@
 namespace Stripe
 {
     using Newtonsoft.Json;
+#if NET6_0_OR_GREATER
+    using STJS = System.Text.Json.Serialization;
+#endif
 
     public class PaymentIntentPaymentMethodOptionsUsBankAccountOptions : INestedOptions
     {
@@ -9,18 +12,27 @@ namespace Stripe
         /// Additional fields for Financial Connections Session creation.
         /// </summary>
         [JsonProperty("financial_connections")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("financial_connections")]
+#endif
         public PaymentIntentPaymentMethodOptionsUsBankAccountFinancialConnectionsOptions FinancialConnections { get; set; }
 
         /// <summary>
         /// Additional fields for Mandate creation.
         /// </summary>
         [JsonProperty("mandate_options")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("mandate_options")]
+#endif
         public PaymentIntentPaymentMethodOptionsUsBankAccountMandateOptionsOptions MandateOptions { get; set; }
 
         /// <summary>
         /// Additional fields for network related functions.
         /// </summary>
         [JsonProperty("networks")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("networks")]
+#endif
         public PaymentIntentPaymentMethodOptionsUsBankAccountNetworksOptions Networks { get; set; }
 
         /// <summary>
@@ -28,6 +40,9 @@ namespace Stripe
         /// One of: <c>fastest</c>, or <c>standard</c>.
         /// </summary>
         [JsonProperty("preferred_settlement_speed")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("preferred_settlement_speed")]
+#endif
         public string PreferredSettlementSpeed { get; set; }
 
         /// <summary>
@@ -56,13 +71,30 @@ namespace Stripe
         /// One of: <c>none</c>, <c>off_session</c>, or <c>on_session</c>.
         /// </summary>
         [JsonProperty("setup_future_usage")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("setup_future_usage")]
+#endif
         public string SetupFutureUsage { get; set; }
+
+        /// <summary>
+        /// Controls when Stripe will attempt to debit the funds from the customer's account. The
+        /// date must be a string in YYYY-MM-DD format. The date must be in the future and between 3
+        /// and 15 calendar days from now.
+        /// </summary>
+        [JsonProperty("target_date")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("target_date")]
+#endif
+        public string TargetDate { get; set; }
 
         /// <summary>
         /// Bank account verification method.
         /// One of: <c>automatic</c>, <c>instant</c>, or <c>microdeposits</c>.
         /// </summary>
         [JsonProperty("verification_method")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("verification_method")]
+#endif
         public string VerificationMethod { get; set; }
     }
 }

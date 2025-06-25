@@ -4,6 +4,9 @@ namespace Stripe
     using System;
     using Newtonsoft.Json;
     using Stripe.Infrastructure;
+#if NET6_0_OR_GREATER
+    using STJS = System.Text.Json.Serialization;
+#endif
 
     /// <summary>
     /// Events are our way of letting you know when something interesting happens in your
@@ -36,24 +39,36 @@ namespace Stripe
     /// href="https://stripe.com/docs/api#retrieve_event">Retrieve Event API</a> for 30 days.
     /// </summary>
     [JsonConverter(typeof(EventConverter))]
+#if NET6_0_OR_GREATER
+    [NoSystemTextJsonAttributesNeeded("Converter is only needed for deserialization inside the Stripe.net SDK")]
+#endif
     public class Event : StripeEntity<Event>, IHasId, IHasObject
     {
         /// <summary>
         /// Unique identifier for the object.
         /// </summary>
         [JsonProperty("id")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("id")]
+#endif
         public string Id { get; set; }
 
         /// <summary>
         /// String representing the object's type. Objects of the same type share the same value.
         /// </summary>
         [JsonProperty("object")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("object")]
+#endif
         public string Object { get; set; }
 
         /// <summary>
         /// The connected account that originates the event.
         /// </summary>
         [JsonProperty("account")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("account")]
+#endif
         public string Account { get; set; }
 
         /// <summary>
@@ -61,16 +76,35 @@ namespace Stripe
         /// events on or after October 31, 2014.
         /// </summary>
         [JsonProperty("api_version")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("api_version")]
+#endif
         public string ApiVersion { get; set; }
+
+        /// <summary>
+        /// Authentication context needed to fetch the event or related object.
+        /// </summary>
+        [JsonProperty("context")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("context")]
+#endif
+        public string Context { get; set; }
 
         /// <summary>
         /// Time at which the object was created. Measured in seconds since the Unix epoch.
         /// </summary>
         [JsonProperty("created")]
         [JsonConverter(typeof(UnixDateTimeConverter))]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("created")]
+        [STJS.JsonConverter(typeof(STJUnixDateTimeConverter))]
+#endif
         public DateTime Created { get; set; } = Stripe.Infrastructure.DateTimeUtils.UnixEpoch;
 
         [JsonProperty("data")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("data")]
+#endif
         public EventData Data { get; set; }
 
         /// <summary>
@@ -78,6 +112,9 @@ namespace Stripe
         /// the object exists in test mode.
         /// </summary>
         [JsonProperty("livemode")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("livemode")]
+#endif
         public bool Livemode { get; set; }
 
         /// <summary>
@@ -85,12 +122,18 @@ namespace Stripe
         /// 20x response) to the URLs you specify.
         /// </summary>
         [JsonProperty("pending_webhooks")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("pending_webhooks")]
+#endif
         public long PendingWebhooks { get; set; }
 
         /// <summary>
         /// Information on the API request that triggers the event.
         /// </summary>
         [JsonProperty("request")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("request")]
+#endif
         public EventRequest Request { get; set; }
 
         /// <summary>
@@ -144,18 +187,19 @@ namespace Stripe
         /// <c>identity.verification_session.requires_input</c>,
         /// <c>identity.verification_session.verified</c>, <c>invoice.created</c>,
         /// <c>invoice.deleted</c>, <c>invoice.finalization_failed</c>, <c>invoice.finalized</c>,
-        /// <c>invoice.marked_uncollectible</c>, <c>invoice.overdue</c>, <c>invoice.paid</c>,
-        /// <c>invoice.payment_action_required</c>, <c>invoice.payment_failed</c>,
-        /// <c>invoice.payment_succeeded</c>, <c>invoice.sent</c>, <c>invoice.upcoming</c>,
-        /// <c>invoice.updated</c>, <c>invoice.voided</c>, <c>invoice.will_be_due</c>,
-        /// <c>invoiceitem.created</c>, <c>invoiceitem.deleted</c>,
-        /// <c>issuing_authorization.created</c>, <c>issuing_authorization.request</c>,
-        /// <c>issuing_authorization.updated</c>, <c>issuing_card.created</c>,
-        /// <c>issuing_card.updated</c>, <c>issuing_cardholder.created</c>,
-        /// <c>issuing_cardholder.updated</c>, <c>issuing_dispute.closed</c>,
-        /// <c>issuing_dispute.created</c>, <c>issuing_dispute.funds_reinstated</c>,
-        /// <c>issuing_dispute.funds_rescinded</c>, <c>issuing_dispute.submitted</c>,
-        /// <c>issuing_dispute.updated</c>, <c>issuing_personalization_design.activated</c>,
+        /// <c>invoice.marked_uncollectible</c>, <c>invoice.overdue</c>, <c>invoice.overpaid</c>,
+        /// <c>invoice.paid</c>, <c>invoice.payment_action_required</c>,
+        /// <c>invoice.payment_failed</c>, <c>invoice.payment_succeeded</c>, <c>invoice.sent</c>,
+        /// <c>invoice.upcoming</c>, <c>invoice.updated</c>, <c>invoice.voided</c>,
+        /// <c>invoice.will_be_due</c>, <c>invoice_payment.paid</c>, <c>invoiceitem.created</c>,
+        /// <c>invoiceitem.deleted</c>, <c>issuing_authorization.created</c>,
+        /// <c>issuing_authorization.request</c>, <c>issuing_authorization.updated</c>,
+        /// <c>issuing_card.created</c>, <c>issuing_card.updated</c>,
+        /// <c>issuing_cardholder.created</c>, <c>issuing_cardholder.updated</c>,
+        /// <c>issuing_dispute.closed</c>, <c>issuing_dispute.created</c>,
+        /// <c>issuing_dispute.funds_reinstated</c>, <c>issuing_dispute.funds_rescinded</c>,
+        /// <c>issuing_dispute.submitted</c>, <c>issuing_dispute.updated</c>,
+        /// <c>issuing_personalization_design.activated</c>,
         /// <c>issuing_personalization_design.deactivated</c>,
         /// <c>issuing_personalization_design.rejected</c>,
         /// <c>issuing_personalization_design.updated</c>, <c>issuing_token.created</c>,
@@ -215,10 +259,16 @@ namespace Stripe
         /// <c>treasury.outbound_transfer.returned</c>,
         /// <c>treasury.outbound_transfer.tracking_details_updated</c>,
         /// <c>treasury.received_credit.created</c>, <c>treasury.received_credit.failed</c>,
-        /// <c>treasury.received_credit.succeeded</c>, <c>treasury.received_debit.created</c>, or
-        /// <c>ping</c>.
+        /// <c>treasury.received_credit.succeeded</c>, <c>treasury.received_debit.created</c>,
+        /// <c>billing.credit_balance_transaction.created</c>, <c>billing.credit_grant.created</c>,
+        /// <c>billing.credit_grant.updated</c>, <c>billing.meter.created</c>,
+        /// <c>billing.meter.deactivated</c>, <c>billing.meter.reactivated</c>,
+        /// <c>billing.meter.updated</c>, or <c>ping</c>.
         /// </summary>
         [JsonProperty("type")]
+#if NET6_0_OR_GREATER
+        [STJS.JsonPropertyName("type")]
+#endif
         public string Type { get; set; }
     }
 }

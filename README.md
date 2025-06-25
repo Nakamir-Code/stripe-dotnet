@@ -30,10 +30,10 @@ From within Visual Studio:
 
 1. Open the Solution Explorer.
 2. Right-click on a project within your solution.
-3. Click on *Manage NuGet Packages...*
-4. Click on the *Browse* tab and search for "Stripe.net".
+3. Click on _Manage NuGet Packages..._
+4. Click on the _Browse_ tab and search for "Stripe.net".
 5. Click on the Stripe.net package, select the appropriate version in the
-   right-tab and click *Install*.
+   right-tab and click _Install_.
 
 ## Documentation
 
@@ -43,28 +43,45 @@ how to use the library.
 
 ## Usage
 
+### Using StripeClient
+
+In version 46 of the Stripe .NET SDK, we have enhanced the `StripeClient` class to be the entry point to access all services that had to be previously independently instantiated with global configuration. This improves discoverability during IDE auto-completion and creates a more intuitive developer experience for you. 
+
+Each client instantiation can have its own configuration so you can access Stripe API with different API keys or different configuration (like number of retries) on a per client basis and without changing a global configuration.
+
+```C#
+// StripeClient pattern (Recommended)
+var client = new StripeClient("sk_test_...");
+Customer customer = client.V1.Customers.Get("cus_1234");
+
+// Global Configuration pattern (Legacy)
+StripeConfiguration.ApiKey = "sk_test_...";
+var service = new CustomerService();
+Customer customer = service.Get("cus_1234");
+```
+
+The previous global configuration pattern will continue to be supported.
+
 ### Authentication
 
 Stripe authenticates API requests using your account’s secret key, which you can find in the Stripe Dashboard. By default, secret keys can be used to perform any API request without restriction.
 
-Use `StripeConfiguration.ApiKey` property to set the secret key.
-
-``` C#
-StripeConfiguration.ApiKey = "sk_test_...";
+```C#
+var client = new StripeClient("sk_test_...");
 ```
 
 ### Creating a resource
 
 The `Create` method of the service class can be used to create a new resource:
 
-``` C#
+```C#
 var options = new CustomerCreateOptions
 {
     Email = "customer@example.com"
 };
 
-var service = new CustomerService();
-Customer customer = service.Create(options);
+var client = new StripeClient("sk_test_...");
+Customer customer = client.V1.Customers.Create(options);
 
 // Newly created customer is returned
 Console.WriteLine(customer.Email);
@@ -74,9 +91,9 @@ Console.WriteLine(customer.Email);
 
 The `Retrieve` method of the service class can be used to retrieve a resource:
 
-``` C#
-var service = new CustomerService();
-Customer customer = service.Get("cus_1234");
+```C#
+var client = new StripeClient("sk_test_...");
+Customer customer = client.V1.Customers.Get("cus_1234");
 
 Console.WriteLine(customer.Email);
 ```
@@ -91,8 +108,8 @@ var options = new CustomerUpdateOptions
     Email = "updated-email@example.com"
 };
 
-var service = new CustomerService();
-Customer customer = service.Update("cus_123", options);
+var client = new StripeClient("sk_test_...");
+Customer customer = client.V1.Customers.Update("cus_123", options);
 
 // The updated customer is returned
 Console.WriteLine(customer.Email);
@@ -103,8 +120,8 @@ Console.WriteLine(customer.Email);
 The `Delete` method of the service class can be used to delete a resource:
 
 ```C#
-var service = new CustomerService();
-Customer customer = service.Delete("cus_123", options);
+var client = new StripeClient("sk_test_...");
+Customer customer = client.V1.Customers.Delete("cus_123", options);
 ```
 
 ### Listing a resource
@@ -115,8 +132,8 @@ The `List` method on the service class can be used to list resources page-by-pag
 > The `List` method returns only a single page, you have to manually continue the iteration using the `StartingAfter` parameter.
 
 ```C#
-var service = new CustomerService();
-var customers = service.List();
+var client = new StripeClient("sk_test_...");
+var customers = client.V1.Customers.List();
 
 string lastId = null;
 
@@ -145,8 +162,8 @@ foreach (Customer customer in customers)
 The `ListAutoPaging` method on the service class can be used to automatically iterate over all pages.
 
 ```C#
-var service = new CustomerService();
-var customers = service.ListAutoPaging();
+var client = new StripeClient("sk_test_...");
+var customers = client.V1.Customers.ListAutoPaging();
 
 // Enumerate all pages of the list
 foreach (Customer customer in customers)
@@ -157,7 +174,7 @@ foreach (Customer customer in customers)
 
 ### Per-request configuration
 
-All of the service methods accept an optional `RequestOptions` object. This is
+All the service methods accept an optional `RequestOptions` object. This is
 used if you want to set an [idempotency key][idempotency-keys], if you are
 using [Stripe Connect][connect-auth], or if you want to pass the secret API
 key on each method.
@@ -216,8 +233,8 @@ options.AddExtraParam("secret_feature_enabled", "true");
 options.AddExtraParam("secret_parameter[primary]", "primary value");
 options.AddExtraParam("secret_parameter[secondary]", "secondary value");
 
-var service = new CustomerService();
-var customer = service.Create(options);
+var client = new StripeClient("sk_test_...");
+var customer = client.V1.Customers.Create(options);
 ```
 
 #### Properties
@@ -225,13 +242,12 @@ var customer = service.Create(options);
 To retrieve undocumented properties from Stripe using C# you can use an option in the library to return the raw JSON object and return the property. An example of this is shown below:
 
 ```c#
-var service = new CustomerService();
-var customer = service.Get("cus_1234");
+var client = new StripeClient("sk_test_...");
+var customer = client.V1.Customers.Get("cus_1234");
 
 customer.RawJObject["secret_feature_enabled"];
 customer.RawJObject["secret_parameter"]["primary"];
 customer.RawJObject["secret_parameter"]["secondary"];
-
 ```
 
 ### Writing a plugin
@@ -264,27 +280,21 @@ You can disable this behavior if you prefer:
 StripeConfiguration.EnableTelemetry = false;
 ```
 
-### Beta SDKs
+### Public Preview SDKs
 
-Stripe has features in the beta phase that can be accessed via the beta version of this package.
-We would love for you to try these and share feedback with us before these features reach the stable phase.
-To install a beta version of Stripe.net use the version parameter with `dotnet add package` command:
+Stripe has features in the [public preview phase](https://docs.stripe.com/release-phases) that can be accessed via versions of this package that have the `-beta.X` suffix like `45.1.0-beta.2`.
+We would love for you to try these as we incrementally release new features and improve them based on your feedback.
+
+To install, choose the version that includes support for the preview feature you are interested in by reviewing the [releases page](https://github.com/stripe/stripe-dotnet/releases/) and then use it in the version parameter with `dotnet add package` command:
 
 ```
-dotnet add package Stripe.net --version <beta version>
+dotnet add package Stripe.net --version <replace-with-the-version-of-your-choice>
 ```
 
-Beta versions are appended with `-beta.X` such as `45.0.0-beta.1`. Make sure to choose the version that includes support for the beta you are interested in!
-
 > **Note**
-> There can be breaking changes between beta versions. Therefore we recommend pinning the package version to a specific beta version in your project file. This way you can install the same version each time without breaking changes unless you are intentionally looking for the latest beta version.
+> There can be breaking changes between two versions of the public preview SDKs without a bump in the major version. Therefore we recommend pinning the package version to a specific version in your project file. This way you can install the same version each time without breaking changes unless you are intentionally looking for the latest public preview SDK.
 
-We highly recommend keeping an eye on when the beta feature you are interested in goes from beta to stable so that you can move from using a beta version of the SDK to the stable version.
-
-If your beta feature requires a `Stripe-Version` header to be sent, set the `StripeConfiguration.ApiVersion` property with the `StripeConfiguration.AddBetaVersion` function:
-
-> **Note**
-> The `ApiVersion` can only be set in beta versions of the library.
+Some preview features require a name and version to be set in the `Stripe-Version` header like `feature_beta=v3`. If your preview feature has this requirement, use the `StripeConfiguration.AddBetaVersion` function (available only in the public preview SDKs):
 
 ```csharp
 StripeConfiguration.AddBetaVersion("feature_beta", "v3");
@@ -308,6 +318,8 @@ New features and bug fixes are released on the latest major version of the Strip
 
 ## Development
 
+[Contribution guidelines for this project](CONTRIBUTING.md)
+
 .NET 8 is required to build and test Stripe.net SDK, you can install it from [get.dot.net](https://get.dot.net/).
 
 The test suite depends on [stripe-mock][stripe-mock], so make sure to fetch
@@ -320,10 +332,13 @@ go install github.com/stripe/stripe-mock@latest
 stripe-mock
 ```
 
+Lastly, we use [just](https://github.com/casey/just) for running common development tasks. You can also read the `justfile` and run those commands directly.
+
 Run all tests from the `src/StripeTests` directory:
 
 ```sh
-dotnet test src
+just test
+# or: dotnet test src
 ```
 
 Run some tests, filtering by name:
@@ -343,7 +358,8 @@ must be formatted before PRs are submitted, otherwise CI will fail. Run the
 formatter with:
 
 ```sh
-dotnet format src/Stripe.net.sln
+just format
+# or: dotnet format src/Stripe.net.sln
 ```
 
 For any requests, bug or comments, please [open an issue][issues] or [submit a

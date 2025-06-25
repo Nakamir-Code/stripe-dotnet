@@ -82,18 +82,26 @@ namespace StripeTests
         public void AcceptsExpectedApiVersion()
         {
             var evt = Event.FromJson(this.json);
-            evt.ApiVersion = StripeConfiguration.ApiVersion;
+            evt.ApiVersion = ApiVersion.Current;
             var serialized = evt.ToJson();
 
             evt = EventUtility.ParseEvent(serialized);
-            Assert.Equal(StripeConfiguration.ApiVersion, evt.ApiVersion);
+            Assert.Equal(ApiVersion.Current, evt.ApiVersion);
         }
 
         [Fact]
         public void AcceptsNewApiVersionInExpectedReleaseTrain()
         {
             var evt = Event.FromJson(this.json);
-            var expectedReleaseTrain = StripeConfiguration.ApiVersion.Split('.')[1];
+            var expectedReleaseTrain = ApiVersion.Current.Split('.')[1];
+
+            // this test only makes sense on GA versions- the exact version for preview versions doesn't
+            // work this way and we can't mock private methods from this test class.
+            if (expectedReleaseTrain == "preview")
+            {
+                return;
+            }
+
             evt.ApiVersion = "2999-10-10." + expectedReleaseTrain;
             var serialized = evt.ToJson();
 
@@ -142,6 +150,18 @@ namespace StripeTests
         {
             Assert.Throws<StripeException>(() =>
                 EventUtility.ValidateSignature("{}", headerValue, string.Empty));
+        }
+
+        [Theory]
+        [InlineData("2024-2-31.acacia", "1999-03-31", false)]
+        [InlineData("2024-2-31.acacia", "2025-03-31.basil", false)]
+        [InlineData("2024-04-31.basil", "2025-03-31.basil", true)]
+        [InlineData("2024-01-01.preview", "2025-03-31.basil", false)]
+        [InlineData("2024-01-01.preview", "2025-03-31.preview", false)]
+        [InlineData("2024-01-01.preview", "2024-01-01.preview", true)]
+        public void CompatibleAPIVersions(string sdkApiVersion, string eventApiVersion, bool expected)
+        {
+            Assert.Equal(EventUtility.IsCompatibleApiVersion(sdkApiVersion, eventApiVersion), expected);
         }
     }
 }
